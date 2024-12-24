@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 
 type SidebarProps = {
-  onFilter: (selectedCategories: string[]) => void;
+  onFilter: (filters: { categories: string[]; salary: string }) => void;
 };
 
 const Sidebar: React.FC<SidebarProps> = ({ onFilter }) => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedSalary, setSelectedSalary] = useState("");
 
   const categories = [
     "事務",
@@ -28,11 +29,17 @@ const Sidebar: React.FC<SidebarProps> = ({ onFilter }) => {
       updatedCategories.push(category);
     }
     setSelectedCategories(updatedCategories);
-    onFilter(updatedCategories); // 親コンポーネントに選択したカテゴリを渡す
+    onFilter({ categories: updatedCategories, salary: selectedSalary });
+  };
+
+  const handleSalaryChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const salary = event.target.value;
+    setSelectedSalary(salary);
+    onFilter({ categories: selectedCategories, salary });
   };
 
   return (
-    <aside className="w-1/4 bg-gray-200 p-4">
+    <aside className="w-1/4 min-h-screen bg-gray-200 p-4">
       <h2 className="font-bold text-xl mb-4">求人カテゴリ</h2>
       <ul>
         {categories.map((category) => (
@@ -49,6 +56,20 @@ const Sidebar: React.FC<SidebarProps> = ({ onFilter }) => {
           </li>
         ))}
       </ul>
+      <h2 className="font-bold text-xl my-4">年収</h2>
+      <select
+        className="w-full border-gray-300 p-2"
+        onChange={handleSalaryChange}
+        value={selectedSalary}
+      >
+        <option value="">すべての年収</option>
+        <option value="300">300万円以上</option>
+        <option value="400">400万円以上</option>
+        <option value="500">500万円以上</option>
+        <option value="600">600万円以上</option>
+        <option value="700">700万円以上</option>
+        <option value="800">800万円以上</option>
+      </select>
     </aside>
   );
 };
